@@ -1,0 +1,83 @@
+server:
+  port: 8090
+spring:
+  application:
+    name: your-application-name
+  datasource:
+    url: jdbc:mysql://10.98.66.14:3306/leelesan?characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: root
+    password: mes@123456
+    driver-class-name: com.mysql.jdbc.Driver
+    type: com.alibaba.druid.pool.DruidDataSource
+    druid:
+      initial-size: 5
+      min-idle: 3
+      max-active: 50
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+      validation-query: SELECT 1 FROM DUAL
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
+      filters: stat,wall,log4j2
+      connection-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: your.package.name.domain
+
+feign:
+  client:
+    config:
+      default:
+        connectTimeout: 5000
+        readTimeout: 10000
+
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: your-tx-service-group
+  config:
+    type: nacos
+    nacos:
+      server-addr: 10.98.66.20:8848
+      group: SEATA_GROUP
+      namespace: public
+      username:
+      password:
+  registry:
+    type: nacos
+    nacos:
+      server-addr: 10.98.66.20:8848
+      group: SEATA_GROUP
+      namespace: public
+      username:
+      password:
+  config-mode: file
+  service:
+    vgroup-mapping:
+      your-service-group: default
+    groupMapping:
+      your-service-group: default
+  store:
+    mode: db
+    db:
+      driver-class-name: com.mysql.jdbc.Driver
+      url: jdbc:mysql://10.98.66.14:3306/leelesan
+      user: root
+      password: sg@123456
+      min-conn: 1
+      max-conn: 3
+      global-table:
+        name: global_table
+      branch-table:
+        name: branch_table
+      lock-table:
+        name: lock_table
+      query-limit: 100
+
+logging:
+  level:
+    io:
+      seata: info
